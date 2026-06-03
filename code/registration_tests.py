@@ -44,12 +44,37 @@ def transforms_test():
 
 def combining_transforms():
 
+
     X = util.test_object(1)
 
-    #------------------------------------------------------------------#
-    # TODO: Experiment with combining transformation matrices.
-    #------------------------------------------------------------------#
+    X_rot = reg.rotate(3*np.pi/4).dot(X)
+    X_shear = reg.shear(0.1, 0.2).dot(X)
+    X_reflect = reg.reflect(-1, -1).dot(X)
 
+    X_1 = reg.reflect(-1, 1).dot(reg.rotate(3*np.pi/4)).dot(X)
+    X_2 = reg.rotate(3*np.pi/4).dot(reg.reflect(-1, 1)).dot(X)
+    
+
+    fig = plt.figure(figsize=(12,5))
+    ax1 = fig.add_subplot(141, xlim=(-4,4), ylim=(-4,4))
+    ax2 = fig.add_subplot(142, xlim=(-4,4), ylim=(-4,4))
+    ax3 = fig.add_subplot(143, xlim=(-4,4), ylim=(-4,4))
+    ax4 = fig.add_subplot(144, xlim=(-4,4), ylim=(-4,4))
+
+    util.plot_object(ax1, X)
+    util.plot_object(ax2, X_1)
+    util.plot_object(ax3, X_2)
+    util.plot_object(ax4, X_2)
+
+    ax1.set_title('Original')
+    ax2.set_title('Rotation')
+    ax3.set_title('Shear')
+    ax4.set_title('Reflection')
+
+    ax1.grid()
+    ax2.grid()
+    ax3.grid()
+    ax4.grid()
 
 def t2h_test():
 
@@ -77,11 +102,16 @@ def arbitrary_rotation():
 
     X = util.test_object(1)
     Xh = util.c2h(X)
+    Xt = X[:,0]
+    Xzero = np.array([0, 0])
 
     #------------------------------------------------------------------#
     # TODO: Perform rotation of the test shape around the first vertex
     #------------------------------------------------------------------#
-
+    T_1 = util.t2h(reg.identity(), Xt)
+    T_rot = util.t2h(reg.rotate(np.pi/4), Xzero)
+    T_2 = util.t2h(reg.identity(), -Xt)
+    T = T_1.dot(T_rot).dot(T_2)
     X_rot = T.dot(Xh)
 
     fig = plt.figure(figsize=(5,5))
@@ -135,12 +165,25 @@ def image_transform_test():
     
 
 def ls_solve_test():
+    A = np.array([[3,4],
+                  [5,6],
+                  [7,8],
+                  [17,10]])
+    
+    b = np.array([[1],
+                  [2],
+                  [3],
+                  [4]])
 
+    w, E = reg.ls_solve(A,b)
+    
     #------------------------------------------------------------------#
     # TODO: Test your implementation of the ls_solve definition
     #------------------------------------------------------------------#
 
+    
     print('Test successful!')
+    print(w, E)
 
 
 def ls_affine_test():
@@ -157,7 +200,7 @@ def ls_affine_test():
     T = util.t2h(T_rot.dot(T_scale).dot(T_shear), np.array([10, 20]))
 
     Xm = T.dot(Xh)
-
+    
     Te = reg.ls_affine(Xh, Xm)
 
     Xmt = Te.dot(Xm)
@@ -189,7 +232,6 @@ def correlation_test():
     I = plt.imread('../data/cameraman.tif')
     Th = util.t2h(reg.identity(), np.array([10,20]))
     J, _ = reg.image_transform(I, Th)
-
     C1 = reg.correlation(I, I)
     # the self correlation should be very close to 1
     assert abs(C1 - 1) < 10e-10, "Correlation function is incorrectly implemented (self correlation test)"
@@ -199,6 +241,7 @@ def correlation_test():
     #------------------------------------------------------------------#
 
     print('Test successful!')
+    print(C1)
 
 
 def mutual_information_test():
@@ -209,9 +252,7 @@ def mutual_information_test():
     p1 = reg.joint_histogram(I, I)
     MI1 = reg.mutual_information(p1)
 
-    #------------------------------------------------------------------#
-    # TODO: Implement a few tests of the mutual_information definition
-    #------------------------------------------------------------------#
+    
 
     print('Test successful!')
 
@@ -311,6 +352,7 @@ def registration_metrics_demo(use_t2=False):
 
         CC[k] = reg.correlation(I, J)
         MI[k] = reg.mutual_information(p)
+        print(MI[k])
 
         clear_output(wait = True)
         

@@ -42,10 +42,13 @@ def t2h(T, t):
     # t - 2D translation vector
     # Output:
     # Th - homogeneous transformation matrix
-
     #------------------------------------------------------------------#
     # TODO: Implement conversion of a transformation matrix and a translation vector to homogeneous transformation matrix.
-	pass
+    Th = np.array([[T[0,0],T[0,1],t[0]],
+                   [T[1,0],T[1,1],t[1]],
+                   [0,0,1]])
+    
+    return Th
     #------------------------------------------------------------------#
 
 def plot_object(ax, X):
@@ -87,7 +90,7 @@ def cpselect(imagePath1, imagePath2):
 	axes[1].set_title("Image 2")
 	
 	#accumulate points
-	points = plt.ginput(n=-1, timeout=30)
+	points = plt.ginput(n=-1, timeout=0)
 	plt.close(fig)
 	
 	#restore to inline figure placement
