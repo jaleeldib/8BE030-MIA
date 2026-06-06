@@ -20,60 +20,93 @@ plt.rcParams['image.cmap'] = 'gray'
 
 
 def scatter_data_test(showFigs=True):
-    I = plt.imread('../data/dataset_brains/1_1_t1.tif')
-    X1 = I.flatten().T
-    X1 = X1.reshape(-1, 1)
-    GT = plt.imread('../data/dataset_brains/1_1_gt.tif')
-    gt_mask = GT>0
-    Y = gt_mask.flatten() # labels
+        I = plt.imread('../data/dataset_brains/1_1_t1.tif')
+        X1 = I.flatten().T
+        X1 = X1.reshape(-1, 1)
+        GT = plt.imread('../data/dataset_brains/1_1_gt.tif')
+        gt_mask = GT>0
+        Y = gt_mask.flatten() # labels
 
-    I_blurred = ndimage.gaussian_filter(I, sigma=2)
-    X2 = I_blurred.flatten().T
-    X2 = X2.reshape(-1, 1)
-    X_data = np.concatenate((X1, X2), axis=1)
+        I_blurred = ndimage.gaussian_filter(I, sigma=2)
+        X2 = I_blurred.flatten().T
+        X2 = X2.reshape(-1, 1)
+        X_data = np.concatenate((X1, X2), axis=1)
 
-    # Keep track of features you added
-    features = ('T1 intensity', 'T1 gauss 2')
+        # Keep track of features you added
+        features = ('T1 intensity', 'T1 gauss 2')
 
-    if showFigs:
-        util.scatter_data(X_data,Y,0,1)
+        if showFigs:
+            plt.figure()
+            util.scatter_data(X_data,Y,0,1)
 
-    #------------------------------------------------------------------#
-    # TODO: Implement a few test cases of with different features
-    pass
-    #------------------------------------------------------------------#
+        # Test 2
+        I_blurred_5 = ndimage.gaussian_filter(I, sigma=5)
+        X3 = I_blurred_5.flatten().reshape(-1, 1)
+        X_data_2 = np.concatenate((X1, X3), axis=1)
+        
+        features_2 = ('T1 intensity', 'Gaussian sigma=5')
 
-    return X_data, Y
+        if showFigs:
+            plt.figure()
+            util.scatter_data(X_data_2, Y, 0, 1)
+
+        # Test 3
+        I_blur_2 = ndimage.gaussian_filter(I, sigma=2)
+        I_blur_5 = ndimage.gaussian_filter(I, sigma=5)
+        X_blur_2 = I_blur_2.flatten().reshape(-1, 1)
+        X_blur_5 = I_blur_5.flatten().reshape(-1, 1)
+
+        X_data_3 = np.concatenate((X1, X_blur_2, X_blur_5), axis=1)
+        features_3 = ('T1 intensity', 'Gaussian sigma=2', 'Gaussian sigma=5')
+
+        if showFigs:
+            plt.figure()
+            util.scatter_data(X_data_3, Y, 0, 1)
+        return (X_data, X_data_2, X_data_3), Y
 
 
 def scatter_t2_test(showFigs=True):
-    I1 = plt.imread('../data/dataset_brains/1_1_t1.tif')
-    X1 = I1.flatten().T
-    X1 = X1.reshape(-1, 1)
-    I2 = plt.imread('../data/dataset_brains/1_1_t2.tif')
-    X2 = I2.flatten().T
-    X2 = X2.reshape(-1, 1)
+        I1 = plt.imread('../data/dataset_brains/1_1_t1.tif')
+        X1 = I1.flatten().T
+        X1 = X1.reshape(-1, 1)
+        I2 = plt.imread('../data/dataset_brains/1_1_t2.tif')
+        X2 = I2.flatten().T
+        X2 = X2.reshape(-1, 1)
 
-    GT = plt.imread('../data/dataset_brains/1_1_gt.tif')
-    gt_mask = GT>0
-    Y = gt_mask.flatten() # labels
+        GT = plt.imread('../data/dataset_brains/1_1_gt.tif')
+        gt_mask = GT>0
+        Y = gt_mask.flatten() # labels
 
-    I1_blurred = ndimage.gaussian_filter(I1, sigma=4)
-    X12 = I1_blurred.flatten().T
-    X12 = X12.reshape(-1, 1)
-    X_data = np.concatenate((X1, X12), axis=1)
+        I1_blurred = ndimage.gaussian_filter(I1, sigma=4)
+        X12 = I1_blurred.flatten().T
+        X12 = X12.reshape(-1, 1)
+        X_data = np.concatenate((X1, X12), axis=1)
 
-    # Keep track of features you added
-    features = ('T1 intensity', 'T1 gauss 2')
+        # Keep track of features you added
+        features = ('T1 intensity', 'T1 gauss 2')
 
-    if showFigs:
-        util.scatter_data(X_data,Y,0,1)
+        if showFigs:
+            util.scatter_data(X_data,Y,0,1)
 
     #------------------------------------------------------------------#
-    # TODO: Extract features from the T2 image and compare them to the T1 features
+        I2_blurred = ndimage.gaussian_filter(I2, sigma=4)
+        X22 = I2_blurred.flatten().reshape(-1, 1)
+        
+        X_data_t2 = np.concatenate((X2, X22), axis=1)
+        features_t2 = ('T2 intensity', 'T2 gauss sigma=4')
+
+        if showFigs:
+            util.scatter_data(X_data_t2, Y, 0, 1)
+            plt.title('T2: Raw vs Blurred')
+        
+        X_cross = np.concatenate((X1, X2), axis=1)
+        if showFigs:
+            util.scatter_data(X_cross, Y, 0, 1)
+            plt.title('T1 vs T2 intensity comparison')
+            plt.legend()
     #------------------------------------------------------------------#
 
-    return X_data, Y
+        return X_data, Y
 
 
 def extract_coordinate_feature_test():
