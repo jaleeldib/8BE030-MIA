@@ -127,6 +127,10 @@ def feature_stats_test():
 
     #------------------------------------------------------------------#
     # TODO: Write code to examine the mean and standard deviation of your dataset containing variety of features
+    print("X_data: ",X_data)
+    print("Mean: ",np.mean(X_data,1))
+    print("Std: ",np.std(X_data,1))
+        
     #------------------------------------------------------------------#
 
 
@@ -137,11 +141,12 @@ def normalized_stats_test():
     X_data = np.concatenate((X, c), axis=1)
 
     #------------------------------------------------------------------#
-    # TODO: Write code to normalize your dataset containing variety of features,
-    #  then examine the mean and std dev
-    pass
+    from segmentation import normalize_data
+    X_normal, nothing = normalize_data(X_data)
+    mean_normal = np.mean(X_normal)
+    std_normal = np.std(X_normal,1)
+    return X_data, mean_normal, std_normal
     #------------------------------------------------------------------#
-
 
 def distance_test():
     #------------------------------------------------------------------#
